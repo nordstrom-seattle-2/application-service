@@ -1,0 +1,23 @@
+{
+  "name": "application-service",
+  "version": "1.0.0",
+  "description": "Service for processing space rental applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nordstrom-seattle-2/application-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nordstrom-seattle-2/application-service/issues"
+  },
+  "homepage": "https://github.com/nordstrom-seattle-2/application-service#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "serverless-http": "^1.6.0"
+  }
+}
