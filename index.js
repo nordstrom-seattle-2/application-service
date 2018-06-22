@@ -14,7 +14,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/applications/:applicationId', function (req, res) {
-  const applicationId = parseInt(req.params.applicationId)
+  const applicationId = req.params.applicationId
   const params = {
     TableName: APPLICATIONS_TABLE,
     Key: {
@@ -36,24 +36,31 @@ app.get('/applications/:applicationId', function (req, res) {
   });
 })
 
-app.post('/applications/:applicationId', function (req, res) {
-  const applicationId = parseInt(req.params.applicationId);
+app.post('/applications/', function (req, res) {
+  const applicationId = req.body.applicationId;
+  const renterId = req.body.renterId;
+  const spaceId = req.body.spaceId;
+  const dateRange = req.body.dateRange;
 
-  if (typeof applicationId !== 'number') {
-    res.status(400).json({ error: 'applicationId must be an integer' });
+  if (typeof applicationId !== 'string') {
+    return res.status(400).json({ error: 'applicationId must be a string' });
   }
 
   const params = {
     TableName: APPLICATIONS_TABLE,
     Item: {
-      applicationId: applicationId
+      applicationId: applicationId,
+      renterId: renterId,
+      spaceId: spaceId,
+      dateRange: dateRange,
+      state: 'pending'
     },
   };
 
   dynamoDb.put(params, (error) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ error: 'Could not create application' });
+      return res.status(400).json({ error: 'Could not create application' });
     }
     res.json({ applicationId });
   });
