@@ -5,7 +5,6 @@ const app = express()
 const AWS = require('aws-sdk');
 
 const APPLICATIONS_TABLE = process.env.APPLICATIONS_TABLE
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 app.use(bodyParser.json({ strict: false }));
 
@@ -14,10 +13,12 @@ app.get('/', function (req, res) {
 })
 
 app.get('/applications/:applicationId', function (req, res) {
+  const dynamoDb = new AWS.DynamoDB.DocumentClient();
+  const applicationId = parseInt(req.params.applicationId)
   const params = {
     TableName: APPLICATIONS_TABLE,
     Key: {
-      applicationId: req.params.applicationId
+      applicationId: applicationId
     },
   }
 
@@ -37,7 +38,7 @@ app.get('/applications/:applicationId', function (req, res) {
 
 app.post('/applications', function (req, res) {
   const { applicationId } = req.body;
-  if (typeof applicationId !== 'integer') {
+  if (typeof applicationId !== 'number') {
     res.status(400).json({ error: 'applicationId must be an integer' });
   }
 
