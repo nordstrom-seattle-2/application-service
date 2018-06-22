@@ -37,7 +37,7 @@ resources:
         AttributeDefinitions:
           -
             AttributeName: applicationId
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           -
             AttributeName: applicationId
