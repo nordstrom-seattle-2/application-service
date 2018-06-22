@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/nordstrom-seattle-2/application-service#readme",
   "dependencies": {
+    "aws-sdk": "^2.261.1",
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "serverless-http": "^1.6.0"
   }

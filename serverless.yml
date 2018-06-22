@@ -1,10 +1,26 @@
 service: application-service
 
+custom:
+  tableName: 'applications-table-${self:provider.stage}'
+
 provider:
   name: aws
   runtime: nodejs6.10
   stage: dev
   region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["ApplicationsDynamoDBTable", "Arn" ] }
+  environment:
+    APPLICATIONS_TABLE: ${self:custom.tableName}
 
 functions:
   app:
@@ -12,3 +28,21 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+
+resources:
+  Resources:
+    ApplicationsDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: applicationId
+            AttributeType: N
+        KeySchema:
+          -
+            AttributeName: applicationId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
