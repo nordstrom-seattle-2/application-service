@@ -15,6 +15,7 @@ app.get('/', function (req, res) {
 
 app.get('/applications/:applicationId', function (req, res) {
   const applicationId = req.params.applicationId
+
   const params = {
     TableName: APPLICATIONS_TABLE,
     Key: {
@@ -29,7 +30,7 @@ app.get('/applications/:applicationId', function (req, res) {
     }
     if (result.Item) {
       const {applicationId} = result.Item;
-      res.json({ applicationId });
+      res.json(result.Item);
     } else {
       res.status(404).json({ error: "Application not found" });
     }
@@ -37,7 +38,7 @@ app.get('/applications/:applicationId', function (req, res) {
 })
 
 app.post('/applications/', function (req, res) {
-  const applicationId = req.body.applicationId;
+  const applicationId = (req.body.renterId + req.body.spaceId + req.body.dateRange);
   const renterId = req.body.renterId;
   const spaceId = req.body.spaceId;
   const dateRange = req.body.dateRange;
@@ -53,7 +54,7 @@ app.post('/applications/', function (req, res) {
       renterId: renterId,
       spaceId: spaceId,
       dateRange: dateRange,
-      state: 'pending'
+      applicationStatus: 'pending'
     },
   };
 
@@ -61,6 +62,30 @@ app.post('/applications/', function (req, res) {
     if (error) {
       console.log(error);
       return res.status(400).json({ error: 'Could not create application' });
+    }
+    res.json({ applicationId });
+  });
+})
+
+app.put('/applications/:applicationId', function(req, res) {
+  const applicationId = req.params.applicationId
+  const applicationStatus = req.body.applicationStatus
+
+  const params = {
+    TableName: APPLICATIONS_TABLE,
+    Key: {
+      applicationId: applicationId
+    },
+    UpdateExpression: "set applicationStatus = :s",
+    ExpressionAttributeValues: {
+      ":s" : applicationStatus
+    }
+  };
+
+  dynamoDb.update(params, (error) => {
+    if (error) {
+      console.log(error);
+      return res.status(400).json({ error: 'Could not update application' });
     }
     res.json({ applicationId });
   });
